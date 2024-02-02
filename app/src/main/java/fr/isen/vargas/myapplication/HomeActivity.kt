@@ -1,57 +1,42 @@
 package fr.isen.vargas.myapplication
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import fr.isen.vargas.myapplication.ui.theme.MyApplicationTheme
-import android.util.Log
-import android.util.Size
-import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import fr.isen.vargas.myapplication.ui.theme.MenuActivity
+import fr.isen.vargas.myapplication.ui.theme.MyApplicationTheme
 
 class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,8 +44,9 @@ class HomeActivity : ComponentActivity() {
         setContent {
             MyApplicationTheme {
                 Column {
+                    val context  = LocalContext.current
                     LogoWithText()
-                    displayMenu()
+                    displayMenu(context)
                 }
             }
         }
@@ -113,12 +99,11 @@ fun LogoWithText() {
 }
 
 @Composable
-fun displayMenu() {
-    val context  = LocalContext.current
+fun displayMenu(context: Context) {
     Box(
         modifier = Modifier
-        .fillMaxWidth()
-        .background(Color.Transparent) ) {
+            .fillMaxWidth()
+            .background(Color.Transparent) ) {
         Image(
             painter = painterResource(id = R.drawable.tour),
             contentDescription = "logo restauranté",
@@ -135,7 +120,9 @@ fun displayMenu() {
                 .align(Alignment.Center))
         {
             Column(
-                modifier = Modifier.fillMaxWidth().background(Color.Transparent)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Transparent)
                     .padding(top = 20.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -143,7 +130,7 @@ fun displayMenu() {
             {
                 Button(
                     onClick = {
-                        Toast.makeText(context, "Vous avez cliqué sur entrées", Toast.LENGTH_SHORT).show() },
+                        goToActivity(context, "ENTREES")},
                     border = BorderStroke(1.dp, Color.Green),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Green),
                     modifier = Modifier
@@ -153,7 +140,8 @@ fun displayMenu() {
                     Text("Entrées", fontSize = 20.sp)
                 }
                 Button(
-                    onClick = { Toast.makeText(context, "Vous avez cliqué sur plats", Toast.LENGTH_SHORT).show() },
+                    onClick = {
+                        goToActivity(context, "PLATS")},
                     border = BorderStroke(1.dp, Color.White),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
                     modifier = Modifier
@@ -163,7 +151,8 @@ fun displayMenu() {
                     Text("Plats", fontSize = 20.sp)
                 }
                 Button(
-                    onClick = { Toast.makeText(context, "Vous avez cliqué sur entrées", Toast.LENGTH_SHORT).show() },
+                    onClick = {
+                        goToActivity(context, "DESSERTS")},
                     border = BorderStroke(1.dp, Color.Red),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red),
                     modifier = Modifier
@@ -175,4 +164,12 @@ fun displayMenu() {
             }
         }
     }
+}
+
+fun goToActivity(context: Context, name: String)
+{
+    Toast.makeText(context, "Vous avez cliqué sur plats", Toast.LENGTH_SHORT).show()
+    val intent = Intent(context, MenuActivity::class.java)
+    intent.putExtra("EXTRA_MESSAGE", name)
+    context.startActivity(intent)
 }

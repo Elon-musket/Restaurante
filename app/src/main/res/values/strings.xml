@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string-array name="ENTREES">
+        <item name="chevre">Salade de chèvre chaud...9€</item>
+        <item name="caesar">Salade Caesar...9€</item>
+        <item name="chevre">Gaspacho...6€</item>
+        <item name="caesar">Tapenade..5€</item>
+        <item name="chevre">Chien à la poêle...7,95€</item>
+    </string-array>
+    <string-array name="PLATS">
+        <item name="Pizza">Pizza a la morue...15,95€</item>
+        <item name="Lasagne">Lasage aux ongles de pied...16€</item>
+        <item name="Lasagne">Tortellini de gambas...19,95€</item>
+    </string-array>
+    <string-array name="DESSERTS">
+        <item name="Tarte Citron">Tarte au citron...9,95€</item>
+        <item name="Fondant chocolat">Fondant au chocolat...7,95€</item>
+    </string-array>
+    <string name="title_activity_ingredient">IngredientActivity</string>
 </resources>

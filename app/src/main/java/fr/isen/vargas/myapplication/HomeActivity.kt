@@ -24,6 +24,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -74,12 +78,12 @@ fun LogoWithText() {
                     contentDescription = "logo restauranté",
                     modifier = Modifier
                         .padding(10.dp)
-                        .size(90.dp)
+                        .size(110.dp)
                         .clip(MaterialTheme.shapes.medium)
                 )
                 Text(
-                    "RESTAURANT DE PÈRE EN FILS",
-                    fontSize = 16.sp,
+                    "RESTAURANTÉ                DÉ PÈRE EN FILS",
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
@@ -163,6 +167,15 @@ fun displayMenu(context: Context) {
                 }
             }
         }
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .height(40.dp)
+                .background(color = Color(android.graphics.Color.parseColor("#FF685C")))
+        ) {
+            chariot()
+        }
     }
 }
 
@@ -172,4 +185,23 @@ fun goToActivity(context: Context, name: String)
     val intent = Intent(context, MenuActivity::class.java)
     intent.putExtra("EXTRA_MESSAGE", name)
     context.startActivity(intent)
+}
+
+@Composable
+fun chariot()
+{
+    var cost by remember { mutableStateOf(0.0) }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(40.dp)
+            .background(color = Color(android.graphics.Color.parseColor("#FF685C"))),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "TOTAL: ${cost}€",
+            fontSize = 20.sp,
+            textAlign = TextAlign.Center,
+        )
+    }
 }

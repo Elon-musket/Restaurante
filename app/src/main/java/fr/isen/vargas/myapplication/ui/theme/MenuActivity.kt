@@ -4,16 +4,22 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,17 +28,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
 import com.android.volley.Request.Method.POST
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import fr.isen.vargas.myapplication.IngredientActivity
 import fr.isen.vargas.myapplication.R
+import org.json.JSONArray
 import org.json.JSONObject
 
 class MenuActivity : ComponentActivity() {
@@ -83,6 +93,13 @@ class MenuActivity : ComponentActivity() {
                 val dictionaryEntre: MutableMap<String, MutableList<String>> = mutableMapOf()
                 val dictionaryPlat: MutableMap<String, MutableList<String>> = mutableMapOf()
                 val dictionaryDessert: MutableMap<String, MutableList<String>> = mutableMapOf()
+                val ListImgEntrees  = mutableListOf<String>()
+                val ListImgPlats  = mutableListOf<String>()
+                val ListImgDesserts  = mutableListOf<String>()
+
+                val ListPriceEntrees  = mutableListOf<String>()
+                val ListPricePlats  = mutableListOf<String>()
+                val ListPriceDesserts  = mutableListOf<String>()
 
                 for (i in 0 until data.length()) {
                     val meal = data.getJSONObject(i)
@@ -94,8 +111,15 @@ class MenuActivity : ComponentActivity() {
                             val itemNameFr = item.getString("name_fr")
                             val itemIdFr = item.getString("id")
                             val itemImage = item.getString("images")
+                            val jsonArray = JSONArray(itemImage)
+                            val secondLink = jsonArray.optString(1)
+                            ListImgEntrees.add(secondLink)
                             val ingredientArray = item.getJSONArray("ingredients")
                             val listIngredient = mutableListOf<String>()
+                            val pricesArray = item.getJSONArray("prices")
+                            val priceTab = pricesArray.getJSONObject(0)
+                            val price = priceTab.getString("price")
+                            ListPriceEntrees.add(price)
                             for(k in 0 until ingredientArray.length())
                             {
                                 val ingredient = ingredientArray.getJSONObject(k)
@@ -104,7 +128,6 @@ class MenuActivity : ComponentActivity() {
                                 if(IdFr == itemIdFr)
                                     listIngredient.add(NameFr)
                             }
-                            listIngredient.add(itemImage)
                             dictionaryEntre[itemNameFr] = listIngredient
                         }
                     }
@@ -115,8 +138,15 @@ class MenuActivity : ComponentActivity() {
                             val itemNameFr = item.getString("name_fr")
                             val itemIdFr = item.getString("id")
                             val itemImage = item.getString("images")
+                            val jsonArray = JSONArray(itemImage)
+                            val secondLink = jsonArray.optString(1)
+                            ListImgPlats.add(secondLink)
                             val ingredientArray = item.getJSONArray("ingredients")
                             val listIngredient = mutableListOf<String>()
+                            val pricesArray = item.getJSONArray("prices")
+                            val priceTab = pricesArray.getJSONObject(0)
+                            val price = priceTab.getString("price")
+                            ListPricePlats.add(price)
                             for(k in 0 until ingredientArray.length())
                             {
                                 val ingredient = ingredientArray.getJSONObject(k)
@@ -125,7 +155,6 @@ class MenuActivity : ComponentActivity() {
                                 if(IdFr == itemIdFr)
                                     listIngredient.add(NameFr)
                             }
-                            listIngredient.add(itemImage)
                             dictionaryPlat[itemNameFr] = listIngredient
                         }
                     }
@@ -136,8 +165,15 @@ class MenuActivity : ComponentActivity() {
                             val itemNameFr = item.getString("name_fr")
                             val itemIdFr = item.getString("id")
                             val itemImage = item.getString("images")
+                            val jsonArray = JSONArray(itemImage)
+                            val secondLink = jsonArray.optString(1)
+                            ListImgDesserts.add(secondLink)
                             val ingredientArray = item.getJSONArray("ingredients")
                             val listIngredient = mutableListOf<String>()
+                            val pricesArray = item.getJSONArray("prices")
+                            val priceTab = pricesArray.getJSONObject(0)
+                            val price = priceTab.getString("price")
+                            ListPriceDesserts.add(price)
                             for(k in 0 until ingredientArray.length())
                             {
                                 val ingredient = ingredientArray.getJSONObject(k)
@@ -146,17 +182,27 @@ class MenuActivity : ComponentActivity() {
                                 if(IdFr == itemIdFr)
                                     listIngredient.add(NameFr)
                             }
-                            listIngredient.add(itemImage)
                             dictionaryDessert[itemNameFr] = listIngredient
                         }
                     }
                 }
-                if(name == "ENTREES")
+                if(name == "ENTREES") {
                     callback(dictionaryEntre)
+                    GlobalVariables.globalTab = ListImgEntrees
+                    GlobalVariables.priceTab = ListPriceEntrees
+                }
                 else if(name == "PLATS")
+                {
                     callback(dictionaryPlat)
+                    GlobalVariables.globalTab = ListImgPlats
+                    GlobalVariables.priceTab = ListPricePlats
+                }
                 else if(name == "DESSERTS")
+                {
                     callback(dictionaryDessert)
+                    GlobalVariables.globalTab = ListImgDesserts
+                    GlobalVariables.priceTab = ListPriceDesserts
+                }
             },
             { error ->
                 Log.e("fetchMenu", "Error fetching meals", error)
@@ -172,34 +218,95 @@ class MenuActivity : ComponentActivity() {
 
 @Composable
 fun MealList(
-    mealsDictonnary: MutableMap<String, MutableList<String>>,
+    mealsDictionary: MutableMap<String, MutableList<String>>,
     context: Context,
     name: String
 ) {
-    Column(
+    val categoryTabIterator = GlobalVariables.globalTab.iterator()
+    val priceTabIterator = GlobalVariables.priceTab.iterator()
+    LazyColumn(
         modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primary),
+            .background(color = Color(android.graphics.Color.parseColor("#F8E8E2"))),
         horizontalAlignment = Alignment.CenterHorizontally // Center-align the content horizontally
     ) {
-        for (category in mealsDictonnary.keys) {
-            Log.d("test",category)
-            Text(
-                category,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.clickable { goToIngredientActivity(context,mealsDictonnary[category]) }
-            )
+        for ((category, ingredientList) in mealsDictionary.entries) {
+            val price = if (priceTabIterator.hasNext()) priceTabIterator.next() else ""
+            val img = if(categoryTabIterator.hasNext()) categoryTabIterator.next() else ""
+
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            goToIngredientActivity(
+                                context,
+                                ingredientList,
+                                price,
+                                img
+                            )
+                        }
+                        .padding(5.dp).background(color = Color(android.graphics.Color.parseColor("#8DCBAD"))),
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        // Text on the left
+                        Text(
+                            category,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .weight(1f) // Takes up available space
+                                .padding(end = 10.dp)
+                        )
+
+
+                            Text(
+                                price + "€",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+
+                            val painter = rememberImagePainter(
+                                data = img,
+                                builder = {
+                                    transformations(CircleCropTransformation())
+                                }
+                            )
+
+                            Box(
+                                modifier = Modifier
+                                    .width(100.dp) // Adjust width as needed
+                                    .height(100.dp) // Adjust height as needed
+                                    .padding(start = 8.dp),
+                            ) {
+                                Image(
+                                    painter = painter,
+                                    contentDescription = null,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            }
+                    }
+                }
+
+            }
         }
     }
 }
+
 @Composable
 fun displayActivityTitle(context: Context, name: String, mealsDictonnary: MutableMap<String, MutableList<String>>) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primary),
+            .background(color = Color(android.graphics.Color.parseColor("#B73300"))),
         horizontalAlignment = Alignment.CenterHorizontally // Center-align the content horizontally
     ) {
         Text(
@@ -207,6 +314,7 @@ fun displayActivityTitle(context: Context, name: String, mealsDictonnary: Mutabl
             fontSize = 30.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
+            color = Color.White,
             modifier = Modifier.padding(10.dp),
 
         )
@@ -218,7 +326,6 @@ fun displayActivityTitle(context: Context, name: String, mealsDictonnary: Mutabl
 @Composable
 fun extractDataFromXml(context: Context, name: String) {
     val data = stringArrayResource(id = getResourceIdByName(name))
-
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -244,12 +351,41 @@ private fun getResourceIdByName(name: String): Int {
     }
 }
 
-
-fun goToIngredientActivity(context: Context, strings: List<String>?)
-{
-    val intent = Intent(context, IngredientActivity::class.java)
-    val nameArrayList = ArrayList(strings)
-    intent.putStringArrayListExtra("EXTRA_MESSAGE", nameArrayList)
-    context.startActivity(intent)
+object GlobalVariables {
+    var globalTab: List<String> = emptyList()
+    var priceTab: List<String> = emptyList()
+    var priceMeal : Int = 0
 }
+
+
+fun goToIngredientActivity(context: Context, strings: List<String>?, text: String, img: String) {
+    try {
+        if (strings != null && text.isNotBlank()) {
+            val intent = Intent(context, IngredientActivity::class.java)
+            val nameArrayList = ArrayList(strings)
+            intent.putStringArrayListExtra("EXTRA_MESSAGE", nameArrayList)
+            intent.putExtra("Link", img)
+
+            // Convert the string to a Double (supports decimal values)
+            val price = text.toDouble()
+
+            // Use putExtra with the correct data type
+            intent.putExtra("Price", price)
+
+            context.startActivity(intent)
+        } else {
+            // Handle the case where strings or text is null or empty
+            // Show a Toast, log a message, or take appropriate action
+        }
+    } catch (e: NumberFormatException) {
+        // Handle the case where text cannot be converted to a double
+        // Display the error using a Toast
+        Toast.makeText(context, "Error: $e", Toast.LENGTH_SHORT).show()
+
+        // Alternatively, you can log the error
+        Log.e("GoToIngredientActivity", "Error converting text to double", e)
+    }
+}
+
+
 

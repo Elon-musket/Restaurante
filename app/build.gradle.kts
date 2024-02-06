@@ -50,7 +50,6 @@ android {
 }
 
 dependencies {
-
     implementation("com.google.code.gson:gson:2.8.9")
     implementation ("com.android.volley:volley:1.2.1")
     implementation ("io.coil-kt:coil-compose:1.4.0")
